@@ -1,14 +1,14 @@
 package com.example.a2doparcial
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,68 +16,92 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.a2doparcial.ui.theme._2doparcialTheme
 
+@Composable
+fun MainPage(){
+    val viewModel : MainPageViewModel = viewModel()
+    MainView(
+        state = viewModel.uiState,
+        onAction = { intencion ->
+            viewModel.ejecutarIntencion(intencion)
+        }
+    )
+}
 
 @Composable
-fun MainPage(modifier: Modifier = Modifier) {
-
-    val viewModel:MainPageViewModel = viewModel()
-
-    val ciudad = remember { mutableStateOf<String>("Caba") }
-    val temperatura = remember { mutableStateOf<Int>(14) }
-    val descripcion = remember { mutableStateOf<String>("nublado") }
-    val st = remember { mutableStateOf<Int>(13) }
-
-    Column (
+fun MainView(
+    modifier: Modifier = Modifier,
+    state : Estado,
+    onAction: (Intencion)->Unit
+) {
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = ciudad.value, style= MaterialTheme.typography.titleMedium)
-        Text(text = "${temperatura.value}°", style= MaterialTheme.typography.titleLarge)
-        Text(text = descripcion.value, style= MaterialTheme.typography.bodyMedium)
-        Text(text = "sensacionTermica: ${st.value}°", style= MaterialTheme.typography.bodyMedium)
+        when(state){
+            is Estado.Error -> ErrorView(mensaje = state.mensaje)
+            is Estado.Exitoso -> ClimaView(ciudad = state.ciudad, temperatura = state.temperatura, descripcion = state.descripcion, st = state.st)
+            Estado.Vacio -> EmptyView()
+        }
 
-        Button(
-            onClick = {
-                ciudad.value = ""
-                temperatura.value = 0
-                descripcion.value = ""
-                st.value = 0
-            }
-        ){
+        Spacer(modifier = Modifier.height(100.dp))
+
+        Button(onClick = { onAction(Intencion.BorrarTodo) }) {
             Text(text = "Borrar todo")
         }
-
-        Button(
-            onClick = {
-                ciudad.value = "CABA"
-                temperatura.value = 10
-                descripcion.value = "Nublado"
-                st.value = 0
-            }
-        ){
+        Button(onClick = { onAction(Intencion.MostrarCaba) }) {
             Text(text = "Mostrar Caba")
         }
-
-        Button(
-            onClick = {
-                ciudad.value = "Cordoba"
-                temperatura.value = 25
-                descripcion.value = "Soleado"
-                st.value = 0
-            }
-        ){
+        Button(onClick = { onAction(Intencion.MostrarCordoba) }) {
             Text(text = "Mostrar Cordoba")
+        }
+        Button(onClick = { onAction(Intencion.MostrarError) }) {
+            Text(text = "Mostrar Error")
         }
     }
 }
 
+@Composable
+fun EmptyView(){
+    Text(text = "No hay nada que mostrar")
+}
+
+@Composable
+fun ErrorView(mensaje: String){
+    Text(text = mensaje)
+}
+
+@Composable
+fun ClimaView(ciudad: String, temperatura: Int, descripcion: String, st:Int){
+    Column {
+        Text(text = ciudad, style = MaterialTheme.typography.titleMedium)
+        Text(text = "${temperatura}°", style = MaterialTheme.typography.titleLarge)
+        Text(text = descripcion, style = MaterialTheme.typography.bodyMedium)
+        Text(text = "sensacionTermica: ${st}°", style = MaterialTheme.typography.bodyMedium)
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun MainPagePreview() {
     _2doparcialTheme {
-        MainPage()
+        MainView(state = Estado.Vacio, onAction = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainPagePreview2() {
+    _2doparcialTheme {
+        MainView(state = Estado.Error("Se rompio todo"), onAction = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainPagePreview3() {
+    _2doparcialTheme {
+        MainView(state = Estado.Exitoso(ciudad = "Mendoza", temperatura = 0), onAction = {})
     }
 }
