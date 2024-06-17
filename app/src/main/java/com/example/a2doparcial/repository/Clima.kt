@@ -1,4 +1,4 @@
-package com.example.a2doparcial
+package com.example.a2doparcial.repository
 
 data class Clima (
     val temperatura: Int,

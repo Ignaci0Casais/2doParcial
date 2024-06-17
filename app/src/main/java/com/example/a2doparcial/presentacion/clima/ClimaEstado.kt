@@ -1,14 +1,15 @@
-package com.example.a2doparcial
+package com.example.a2doparcial.presentacion.clima
 
-sealed class Estado {
+sealed class ClimaEstado {
     data class Exitoso (
         val ciudad: String = "",
         val temperatura: Int = 0,
         val descripcion: String= "",
         val st :Int = 0,
-    ) : Estado()
+    ) : ClimaEstado()
     data class Error(
         val mensaje :String = "",
-    ) : Estado ()
-    data object Vacio: Estado()
+    ) : ClimaEstado()
+    data object Vacio: ClimaEstado()
+    data object Cargando: ClimaEstado()
 }
