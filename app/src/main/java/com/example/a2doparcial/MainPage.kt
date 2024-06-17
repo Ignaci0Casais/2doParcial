@@ -13,35 +13,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.a2doparcial.ui.theme._2doparcialTheme
 
 
 @Composable
 fun MainPage(modifier: Modifier = Modifier) {
 
-    val ciudad = remember { mutableStateOf<String>("Buenos Aires") }
-    val temperatura = remember { mutableStateOf<String>("14°") }
-    val descripcion = remember { mutableStateOf<String>("Nublado") }
-    val st = remember { mutableStateOf<String>("sensacionTermica: 13°") }
+    val viewModel:MainPageViewModel = viewModel()
 
+    val ciudad = remember { mutableStateOf<String>("Caba") }
+    val temperatura = remember { mutableStateOf<Int>(14) }
+    val descripcion = remember { mutableStateOf<String>("nublado") }
+    val st = remember { mutableStateOf<Int>(13) }
 
-    Column(
+    Column (
         modifier = modifier
             .fillMaxWidth()
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Text(text = ciudad.value, style = MaterialTheme.typography.titleMedium)
-        Text(text = temperatura.value, style = MaterialTheme.typography.titleLarge)
-        Text(text = descripcion.value, style = MaterialTheme.typography.bodyMedium)
-        Text(text = st.value, style = MaterialTheme.typography.bodyMedium)
+    ) {
+        Text(text = ciudad.value, style= MaterialTheme.typography.titleMedium)
+        Text(text = "${temperatura.value}°", style= MaterialTheme.typography.titleLarge)
+        Text(text = descripcion.value, style= MaterialTheme.typography.bodyMedium)
+        Text(text = "sensacionTermica: ${st.value}°", style= MaterialTheme.typography.bodyMedium)
 
         Button(
             onClick = {
                 ciudad.value = ""
-                temperatura.value = ""
+                temperatura.value = 0
                 descripcion.value = ""
-                st.value = ""
+                st.value = 0
             }
         ){
             Text(text = "Borrar todo")
@@ -50,9 +52,9 @@ fun MainPage(modifier: Modifier = Modifier) {
         Button(
             onClick = {
                 ciudad.value = "CABA"
-                temperatura.value = "10°"
+                temperatura.value = 10
                 descripcion.value = "Nublado"
-                st.value = "9°"
+                st.value = 0
             }
         ){
             Text(text = "Mostrar Caba")
@@ -61,15 +63,16 @@ fun MainPage(modifier: Modifier = Modifier) {
         Button(
             onClick = {
                 ciudad.value = "Cordoba"
-                temperatura.value = "20"
+                temperatura.value = 25
                 descripcion.value = "Soleado"
-                st.value = "23"
+                st.value = 0
             }
         ){
             Text(text = "Mostrar Cordoba")
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
