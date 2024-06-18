@@ -7,13 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.a2doparcial.repository.Repositorio
-import com.example.a2doparcial.repository.modelos.Ciudad
 import com.example.a2doparcial.router.Router
 import kotlinx.coroutines.launch
 
 class ClimaViewModel(
     val respositorio: Repositorio,
-    val router: Router
+    val router: Router,
+    val lat : Float,
+    val lon : Float
 ) : ViewModel() {
 
     var uiState by mutableStateOf<ClimaEstado>(ClimaEstado.Vacio)
@@ -27,9 +28,8 @@ class ClimaViewModel(
     fun traerClima() {
         uiState = ClimaEstado.Cargando
         viewModelScope.launch {
-            val cordoba = Ciudad(name = "Cordoba", lat = -31.4135, lon = -64.18105, country = "Ar")
             try{
-                val clima = respositorio.traerClima(cordoba)
+                val clima = respositorio.traerClima(lat = lat, lon = lon)
                 uiState = ClimaEstado.Exitoso(
                     ciudad = clima.name ,
                     temperatura = clima.main.temp,
@@ -46,12 +46,14 @@ class ClimaViewModel(
 
 class ClimaViewModelFactory(
     private val repositorio: Repositorio,
-    private val router: Router
+    private val router: Router,
+    private val lat: Float,
+    private val lon: Float,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ClimaViewModel::class.java)) {
-            return ClimaViewModel(repositorio,router) as T
+            return ClimaViewModel(repositorio,router,lat,lon) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

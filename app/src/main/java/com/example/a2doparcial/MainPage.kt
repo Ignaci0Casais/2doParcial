@@ -1,12 +1,13 @@
 package com.example.a2doparcial
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.a2doparcial.presentacion.ciudades.CiudadesPage
 import com.example.a2doparcial.presentacion.clima.ClimaPage
-import com.example.a2doparcial.router.Enrutador
 import com.example.a2doparcial.router.Ruta
 
 @Composable
@@ -22,9 +23,16 @@ fun MainPage() {
             CiudadesPage(navHostController)
         }
         composable(
-            route = Ruta.Clima().id
+            route = "clima?lat={lat}&lon={lon}",
+            arguments =  listOf(
+                navArgument("lat") { type= NavType.FloatType },
+                navArgument("lon") { type= NavType.FloatType }
+            )
         ) {
-            ClimaPage(navHostController)
+            val lat = it.arguments?.getFloat("lat") ?: 0.0f
+            val lon = it.arguments?.getFloat("lon") ?: 0.0f
+            ClimaPage(navHostController, lat = lat, lon = lon)
+
         }
     }
 }

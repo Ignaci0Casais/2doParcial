@@ -5,7 +5,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.a2doparcial.repository.RepositorioApi
 import com.example.a2doparcial.router.Enrutador
-import com.example.a2doparcial.router.Router
 
 @Composable
 fun CiudadesPage(
